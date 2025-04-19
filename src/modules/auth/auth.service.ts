@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-base-to-string */
 /* eslint-disable prettier/prettier */
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -44,9 +45,8 @@ export class AuthService {
         }
 
         const token = this.jwtService.sign({ 
-            sub: user._id,
-            username: user.username,
-            email: user.email
+            id: user._id.toString(),
+            username: user.username
         });
 
         const userResponse: UserResponse = {

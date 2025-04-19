@@ -1,14 +1,18 @@
-import { IsString, IsNotEmpty, IsEmail, ValidateIf } from 'class-validator';
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable prettier/prettier */
+import { IsEmail, IsNotEmpty, IsOptional, IsString, ValidateIf } from 'class-validator';
 
 export class LoginRequestDto {
+  @IsOptional()
   @IsString()
   @IsNotEmpty()
-  @ValidateIf((o: LoginRequestDto) => !o.email || (o.email && !o.username))
+  @ValidateIf(o => !o.email)
   username?: string;
 
+  @IsOptional()
   @IsEmail()
   @IsNotEmpty()
-  @ValidateIf((o: LoginRequestDto) => !o.username || (o.username && !o.email))
+  @ValidateIf(o => !o.username)
   email?: string;
 
   @IsString()
