@@ -18,6 +18,7 @@ export class User {
 
   @Prop({
     type: [{
+      _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
       content: { type: String, required: true },
       criteria: {
         interests: [{ type: String, required: true }],
@@ -34,6 +35,7 @@ export class User {
     default: [],
   })
   posts: {
+    _id: mongoose.Types.ObjectId;
     content: string;
     criteria: {
       interests: string[];
