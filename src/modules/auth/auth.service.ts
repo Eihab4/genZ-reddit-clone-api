@@ -2,7 +2,7 @@
 /* eslint-disable prettier/prettier */
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument } from '../user/schemas/user.schemas';
+import { User, UserDocument } from '../user/schemas/user.schema';
 import { Model } from 'mongoose';
 import { RegisterRequestDto } from './dtos/requests/register.request.dto';
 import * as bcrypt from 'bcrypt';

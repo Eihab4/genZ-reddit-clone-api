@@ -51,6 +51,9 @@ export class User {
     createdAt: Date;
   }[];
 
+  @Prop({ default: false })
+  isLoggedIn: boolean;
+
   @Prop({ default: Date.now })
   createdAt: Date;
 }
