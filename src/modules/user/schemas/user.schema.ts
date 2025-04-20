@@ -53,6 +53,9 @@ export class User {
   @Prop({ default: false })
   isLoggedIn: boolean;
 
+  @Prop({ type: Date, default: null })
+  lastLoginAt: Date | null;
+
   @Prop({ default: Date.now })
   createdAt: Date;
 }

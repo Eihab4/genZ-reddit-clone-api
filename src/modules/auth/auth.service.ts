@@ -36,45 +36,61 @@ export class AuthService {
         return { message: "User Registered Successfully" };
     }
 
-    async login(loginPayload: LoginRequestDto): Promise<LoginResponseDto> {
-        const { username, password } = loginPayload;
-        console.log(username)
-        const user = await this.userModel.findOne({username}).exec();
+async login(loginPayload: LoginRequestDto): Promise<LoginResponseDto> {
+    const { username, password } = loginPayload;
+    const user = await this.userModel.findOne({ username }).exec();
 
-        if (!user) {
-            throw new UnauthorizedException('Invalid credentials');
-        }
-
-        if (user.isLoggedIn) {
-            throw new UnauthorizedException('User is already logged in');
-        }
-
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-        if (!isPasswordValid) {
-            throw new UnauthorizedException('Invalid credentials');
-        }
-
-        const token = this.jwtService.sign({ 
-            id: user._id.toString(),
-            username: user.username
-        });
-
-
-        await this.userModel.findByIdAndUpdate(user._id, { isLoggedIn: true });
-
-        const userResponse: UserResponse = {
-            username: user.username,
-            email: user.email
-        };
-
-        return {
-            token,
-            user: userResponse
-        };
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
     }
 
-    async logout(userId: string): Promise<{ message: string }> {
-        await this.userModel.findByIdAndUpdate(userId, { isLoggedIn: false });
-        return { message: 'Logged out successfully' };
+    if (user.isLoggedIn && user.lastLoginAt) {
+      const currentTime = new Date();
+      const lastLoginTime = new Date(user.lastLoginAt);
+      const timeDiff = (currentTime.getTime() - lastLoginTime.getTime()) / (1000 * 60 * 60);
+
+      if (timeDiff < 1) {
+        throw new UnauthorizedException('User is already logged in');
+      } else {
+        await this.userModel.findByIdAndUpdate(user._id, { isLoggedIn: false });
+      }
     }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const token = this.jwtService.sign({
+      id: user._id.toString(),
+      username: user.username,
+    });
+
+    await this.userModel.findByIdAndUpdate(user._id, {
+      isLoggedIn: true,
+      lastLoginAt: new Date(),
+    });
+
+    const userResponse: UserResponse = {
+      username: user.username,
+      email: user.email,
+    };
+
+    return {
+      token,
+      user: userResponse,
+    };
+  }
+
+  async logout(userId: string): Promise<void> {
+    const user = await this.userModel.findById(userId);
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    await this.userModel.findByIdAndUpdate(userId, {
+      isLoggedIn: false,
+      lastLoginAt: null,
+    });
+  }
 }

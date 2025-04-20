@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable prettier/prettier */
 import {
   CanActivate,
@@ -9,15 +11,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { User, UserDocument } from '../../user/schemas/user.schema';
 import errorMessages from '../../../config/errorMessages.json';
-
-export interface JwtPayload {
-  id: string;
-  username: string;
-}
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -26,51 +20,39 @@ export class AuthGuard implements CanActivate {
   constructor(
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
-    @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
   ) {}
 
-  private extractTokenFromHeader(request: Request): string {
-    const [type, token] = request.headers.authorization?.split(' ') ?? [];
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const req: Request = context.switchToHttp().getRequest<Request>();
+    const authHeader = req.headers['authorization'];
+
+    if (!authHeader) {
+      this.logger.warn('Missing Authorization header');
+      throw new UnauthorizedException(errorMessages.auth_errors.missing_token);
+    }
+
+    const [type, token] = authHeader.split(' ');
     if (type !== 'Bearer' || !token) {
       this.logger.warn('Invalid token format in Authorization header');
       throw new UnauthorizedException(errorMessages.auth_errors.invalid_token_format);
     }
-    return token;
-  }
 
-  async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest<Request>();
-    
     try {
-      const token = this.extractTokenFromHeader(request);
       const secret = this.configService.get<string>('JWT_SECRET');
       if (!secret) {
         this.logger.error('JWT_SECRET is not defined in configuration');
         throw new UnauthorizedException('Server configuration error: JWT_SECRET missing');
       }
 
-      const payload = await this.jwtService.verifyAsync<JwtPayload>(token, {
+      const payload = await this.jwtService.verifyAsync(token, {
         secret,
       });
       this.logger.debug(`Token verified successfully for user: ${payload.username}`);
 
-      const user = await this.userModel.findById(payload.id);
-      if (!user) {
-        this.logger.warn(`User not found for ID: ${payload.id}`);
-        throw new UnauthorizedException(errorMessages.auth_errors.blacklisted_token);
-      }
-
-      request['user'] = {
-        id: payload.id,
-        username: payload.username,
-      };
+      req['user'] = payload;
       this.logger.debug(`User ${payload.username} authenticated successfully`);
-
       return true;
     } catch (error: unknown) {
-      if (error instanceof UnauthorizedException) {
-        throw error;
-      }
       const err = error as Error;
       this.logger.error(`Authentication failed: ${err.message}`, err.stack);
 
@@ -80,7 +62,6 @@ export class AuthGuard implements CanActivate {
       if (err.name === 'JsonWebTokenError') {
         throw new UnauthorizedException('Invalid token');
       }
-
       throw new UnauthorizedException(errorMessages.auth_errors.unauthorized);
     }
   }

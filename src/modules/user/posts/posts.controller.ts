@@ -8,7 +8,7 @@ import { CurrentUser } from '../../../decorators/currentUser';
 import { jwtPayload } from '../../auth/utils/jwtPayload';
 
 @UseGuards(AuthGuard)
-@Controller('/posts/:username')
+@Controller('/users/:username/posts')
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
