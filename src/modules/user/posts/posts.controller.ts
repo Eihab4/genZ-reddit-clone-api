@@ -1,36 +1,40 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable prettier/prettier */
-import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Post, Param, Body, UseGuards, Get } from '@nestjs/common';
+import { PostsService } from './posts.service';
 import { CreatePostDto } from './dtos/request/create-post.dto';
 import { PostResponseDto } from './dtos/response/post-response.dto';
-import { AuthGuard } from './../../auth/guards/auth.guard';
-import { PostsService } from './posts.service';
+import { AuthGuard } from '../../auth/guards/auth.guard';
+import { CurrentUser } from '../../../decorators/currentUser';
+import { jwtPayload } from '../../auth/utils/jwtPayload';
 
-@Controller('users/:username/posts')
 @UseGuards(AuthGuard)
+@Controller('/posts/:username')
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Post()
-  async createPost(
+  createPost(
+    @CurrentUser() user: jwtPayload,
+    @Body() createPostDto: CreatePostDto,
     @Param('username') username: string,
-    @Body() createPostPayload: CreatePostDto,
   ): Promise<PostResponseDto> {
-    return this.postsService.createPost(username, createPostPayload);
+    return this.postsService.createPost(user.id, username, createPostDto);
   }
 
-  @Get()
-  async getAllPosts(
+  @Get('/')
+  getAllPosts(
+    @CurrentUser() user: jwtPayload,
     @Param('username') username: string,
   ): Promise<PostResponseDto[]> {
-    return this.postsService.getAllPosts(username);
+    return this.postsService.getAllPosts(user.id, username);
   }
 
   @Get(':postId')
-  async getPostById(
+  getPostById(
+    @CurrentUser() user: jwtPayload,
     @Param('username') username: string,
     @Param('postId') postId: string,
   ): Promise<PostResponseDto> {
-    return this.postsService.getPostById(username, postId);
+    return this.postsService.getPostById(user.id, username, postId);
   }
-} 
+}
