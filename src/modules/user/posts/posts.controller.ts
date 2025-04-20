@@ -12,13 +12,13 @@ import { jwtPayload } from '../../auth/utils/jwtPayload';
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
-  @Post()
+  @Post('/')
   createPost(
     @CurrentUser() user: jwtPayload,
-    @Body() createPostDto: CreatePostDto,
+    @Body() createPostPayload: CreatePostDto,
     @Param('username') username: string,
   ): Promise<PostResponseDto> {
-    return this.postsService.createPost(user.id, username, createPostDto);
+    return this.postsService.createPost(user.id, username, createPostPayload);
   }
 
   @Get('/')
