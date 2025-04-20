@@ -20,6 +20,17 @@ export class AuthService {
 
     async register(registerPayload: RegisterRequestDto): Promise<RegisterResponseDto> {
         const { username, email, password } = registerPayload;
+
+        const existingUsername = await this.userModel.findOne({ username }).exec();
+        if (existingUsername) {
+            throw new UnauthorizedException('Username already exists');
+        }
+
+        const existingEmail = await this.userModel.findOne({ email }).exec();
+        if (existingEmail) {
+            throw new UnauthorizedException('Email already exists');
+        }
+
         const hashedPassword = await bcrypt.hash(password, 10);
         await this.userModel.create({ username, email, password: hashedPassword });
         return { message: "User Registered Successfully" };
