@@ -26,17 +26,16 @@ export class AuthService {
     }
 
     async login(loginPayload: LoginRequestDto): Promise<LoginResponseDto> {
-        const { username, email, password } = loginPayload;
-        
-        const user = await this.userModel.findOne({
-            $or: [
-                { username },
-                { email }
-            ]
-        }).lean();
+        const { username, password } = loginPayload;
+        console.log(username)
+        const user = await this.userModel.findOne({username}).exec();
 
         if (!user) {
             throw new UnauthorizedException('Invalid credentials');
+        }
+
+        if (user.isLoggedIn) {
+            throw new UnauthorizedException('User is already logged in');
         }
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -49,6 +48,9 @@ export class AuthService {
             username: user.username
         });
 
+
+        await this.userModel.findByIdAndUpdate(user._id, { isLoggedIn: true });
+
         const userResponse: UserResponse = {
             username: user.username,
             email: user.email
@@ -58,5 +60,10 @@ export class AuthService {
             token,
             user: userResponse
         };
+    }
+
+    async logout(userId: string): Promise<{ message: string }> {
+        await this.userModel.findByIdAndUpdate(userId, { isLoggedIn: false });
+        return { message: 'Logged out successfully' };
     }
 }
