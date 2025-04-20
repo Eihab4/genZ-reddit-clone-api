@@ -1,0 +1,8 @@
+{
+  "auth_errors": {
+    "missing_token": "Authorization token is missing",
+    "invalid_token_format": "Invalid token format. Use Bearer token",
+    "blacklisted_token": "Token has been blacklisted",
+    "unauthorized": "Unauthorized access"
+  }
+}
