@@ -1,12 +1,10 @@
 /* eslint-disable prettier/prettier */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from './schemas/user.schema';
-import { AddInterestsAndAgeDto } from './dtos/requests/addInterest.request.dto';
-import { AddInterestResponseDto } from './dtos/responses/addInterest.response.dto';
+import { SettingsRequestDto } from './dtos/requests/settings.request.dto';
+import { SettingsResponseDto } from './dtos/responses/settings.response.dto';
 
 @Injectable()
 export class UserService {
@@ -15,8 +13,8 @@ export class UserService {
   async addInterests(
     userId: string,
     username: string,
-    addInterestandAgePayload: AddInterestsAndAgeDto,
-  ): Promise<AddInterestResponseDto> {
+    addInterestandAgePayload: SettingsRequestDto,
+  ): Promise<SettingsResponseDto> {
     const user = await this.userModel.findById(userId);
 
     if (!user || user.username !== username) {
@@ -29,7 +27,7 @@ export class UserService {
     user.age=addInterestandAgePayload.age
     await user.save();
 
-    const response: AddInterestResponseDto = {
+    const response: SettingsResponseDto = {
       message: 'Interests added successfully',
       interests: user.interests,
       age:user.age

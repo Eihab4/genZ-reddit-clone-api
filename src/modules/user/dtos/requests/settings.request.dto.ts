@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { ArrayMinSize, IsArray, IsInt, IsString, Max, Min } from "class-validator";
 
-export class AddInterestsAndAgeDto {
+export class SettingsRequestDto {
       @IsArray()
       @ArrayMinSize(1)
       @IsString({ each: true })

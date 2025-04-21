@@ -4,7 +4,7 @@ import { AuthGuard } from '../auth/guards/auth.guard';
 import { CurrentUser } from 'src/decorators/currentUser';
 import { jwtPayload } from '../auth/utils/jwtPayload';
 import { UserService } from './user.service';
-import { AddInterestsAndAgeDto } from './dtos/requests/addInterest.request.dto';
+import { SettingsRequestDto } from './dtos/requests/settings.request.dto';
 
 @UseGuards(AuthGuard)
 @Controller('users/:username/settings')
@@ -13,9 +13,9 @@ export class UserController {
     @Patch()
     addInterest(
             @CurrentUser() user: jwtPayload,
-            @Body() addInterestPayload:AddInterestsAndAgeDto ,
+            @Body() settingsPayload:SettingsRequestDto ,
             @Param('username') username: string,
     ) {
-        return this.userService.addInterests(user.id, username, addInterestPayload)
+        return this.userService.addInterests(user.id, username, settingsPayload)
     }
 }

@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { IsArray, IsInt, IsString, Max, Min } from 'class-validator';
 
-export class AddInterestResponseDto {
+export class SettingsResponseDto {
   @IsString()
   message: string;
 
