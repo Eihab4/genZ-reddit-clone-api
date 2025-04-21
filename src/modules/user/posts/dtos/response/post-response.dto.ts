@@ -23,6 +23,8 @@ export class CommentResponseDto {
   })
   @Expose()
   createdAt: Date;
+  postId: string;
+  userId: any;
 }
 
 export class PostResponseDto {
