@@ -1,9 +1,14 @@
 /* eslint-disable prettier/prettier */
-import { ArrayMinSize, IsArray, IsString } from "class-validator";
+import { ArrayMinSize, IsArray, IsInt, IsString, Max, Min } from "class-validator";
 
-export class AddInterestDto {
+export class AddInterestsAndAgeDto {
       @IsArray()
       @ArrayMinSize(1)
       @IsString({ each: true })
       interests: string[];
+
+  @IsInt()
+  @Min(1)
+  @Max(120)
+  age: number;
 }

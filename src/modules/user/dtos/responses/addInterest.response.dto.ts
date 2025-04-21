@@ -1,4 +1,5 @@
-import { IsArray, IsString } from 'class-validator';
+/* eslint-disable prettier/prettier */
+import { IsArray, IsInt, IsString, Max, Min } from 'class-validator';
 
 export class AddInterestResponseDto {
   @IsString()
@@ -7,4 +8,9 @@ export class AddInterestResponseDto {
   @IsArray()
   @IsString({ each: true })
   interests: string[];
+
+    @IsInt()
+    @Min(1)
+    @Max(120)
+    age: number;
 }
