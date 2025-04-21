@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable prettier/prettier */
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { User, UserDocument } from '../../schemas/user.schema';
@@ -32,12 +32,34 @@ export class CommentsService {
       throw new NotFoundException('Post not found');
     }
 
+    const commenter = await this.userModel.findById(userId);
+    if (!commenter) {
+      throw new NotFoundException('Commenter not found');
+    }
+
+    if (commenter.age === null || commenter.age < post.criteria.minimumAge) {
+      throw new ForbiddenException(
+        `Commenter does not meet the minimum age requirement of ${post.criteria.minimumAge}`,
+      );
+    }
+
+    const hasMatchingInterest = post.criteria.interests.some((interest) =>
+      commenter.interests.includes(interest),
+    );
+    if (!hasMatchingInterest) {
+      throw new ForbiddenException(
+        'Commenter does not share any interests required by the post',
+      );
+    }
+
     const comment = {
       _id: new Types.ObjectId(),
       content: createCommentDto.content,
       author: new Types.ObjectId(userId),
       createdAt: new Date(),
     };
+
+    
 
     const updatedUser = await this.userModel.findOneAndUpdate(
       { username, 'posts._id': new Types.ObjectId(postId) },
@@ -84,7 +106,9 @@ export class CommentsService {
     if (!post) {
       throw new NotFoundException('Post not found');
     }
-    const comment = post.comments.find((c) => c.author.toString() === userId && c._id?.toString() === commentId);
+    const comment = post.comments.find((c: { _id: Types.ObjectId; content: string; author: Types.ObjectId; createdAt: Date }) => 
+      c.author.toString() === userId && c._id.toString() === commentId
+    );
     if (!comment) {
       throw new NotFoundException('Comment not found or does not belong to user');
     }

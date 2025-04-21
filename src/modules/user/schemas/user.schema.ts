@@ -16,6 +16,9 @@ export class User {
   @Prop({ type: [String], default: [] })
   interests: string[];
 
+  @Prop({ default:null})
+  age: number;
+
   @Prop({
     type: [{
       _id: { type: mongoose.Schema.Types.ObjectId, auto: true },

@@ -23,11 +23,12 @@ export class CommentsController {
   }
 
   @Get('/')
-  async getComments(
+  async getComments (
+    @CurrentUser()user:jwtPayload,
     @Param('postId') postId: string,
     @Param('username') username: string,
   ): Promise<CommentResponseDto[]> {
-    return this.commentService.getCommentsByPostId(username, postId);
+    return this.commentService.getCommentsByPostId(username,postId);
   }
 
   @Delete('/:commentId')
