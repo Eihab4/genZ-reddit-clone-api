@@ -16,6 +16,9 @@ export class User {
   @Prop({ type: [String], default: [] })
   interests: string[];
 
+  @Prop({ default:null})
+  age: number;
+
   @Prop({
     type: [{
       _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
@@ -26,6 +29,7 @@ export class User {
       },
       votes: { type: Number, default: 0 },
       comments: [{
+        _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
         content: { type: String, required: true },
         author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
         createdAt: { type: Date, default: Date.now },
@@ -43,6 +47,7 @@ export class User {
     };
     votes: number;
     comments: {
+      _id: mongoose.Types.ObjectId;
       content: string;
       author: mongoose.Types.ObjectId;
       createdAt: Date;
@@ -61,4 +66,4 @@ export class User {
 }
 
 export type UserDocument = User & Document;
-export const UserSchema = SchemaFactory.createForClass(User); 
+export const UserSchema = SchemaFactory.createForClass(User);
