@@ -7,7 +7,7 @@ import { UserService } from './user.service';
 import { AddInterestsAndAgeDto } from './dtos/requests/addInterest.request.dto';
 
 @UseGuards(AuthGuard)
-@Controller('users/:username')
+@Controller('users/:username/settings')
 export class UserController {
     constructor(private readonly userService: UserService){}
     @Patch()
