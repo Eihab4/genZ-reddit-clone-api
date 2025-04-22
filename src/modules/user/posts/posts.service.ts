@@ -3,8 +3,9 @@ import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/co
 import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from '../schemas/user.schema';
-import { CreatePostDto } from './dtos/request/create-post.dto';
+import { CreatePostDto } from './dtos/request/create-post.request.dto';
 import { PostResponseDto, CommentResponseDto } from './dtos/response/post-response.dto';
+import { VotePostDto } from './dtos/request/vote.request.dto';
 
 interface Post {
   _id: Types.ObjectId;
@@ -93,6 +94,28 @@ export class PostsService {
     }
 
     return this.mapPostToResponseDto(post);
+  }
+  async voteOnPost(
+    userId: string,
+    username: string,
+    postId: string,
+    votePayload: VotePostDto,
+  ): Promise<PostResponseDto> {
+    const user = await this.userModel.findOne({ username });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const postIndex = user.posts.findIndex(p => p._id.toString() === postId);
+    if (postIndex === -1) {
+      throw new NotFoundException('Post not found');
+    }
+
+    user.posts[postIndex].votes += votePayload.vote;
+
+    await user.save();
+
+    return this.mapPostToResponseDto(user.posts[postIndex]);
   }
 
   private mapPostToResponseDto(post: Post): PostResponseDto {
