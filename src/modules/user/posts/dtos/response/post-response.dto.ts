@@ -4,6 +4,13 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class CommentResponseDto {
   @ApiProperty({
+    description: 'The unique identifier of the comment',
+    example: '507f1f77bcf86cd799439012',
+  })
+  @Expose()
+  id: string;
+
+  @ApiProperty({
     description: 'The content of the comment',
     example: 'This is a great post!',
   })
@@ -11,11 +18,11 @@ export class CommentResponseDto {
   content: string;
 
   @ApiProperty({
-    description: 'The username of the comment author',
-    example: 'john_doe',
+    description: 'The ID of the post this comment belongs to',
+    example: '507f1f77bcf86cd799439011',
   })
   @Expose()
-  author: string;
+  postId: string;
 
   @ApiProperty({
     description: 'The date when the comment was created',
@@ -23,8 +30,6 @@ export class CommentResponseDto {
   })
   @Expose()
   createdAt: Date;
-  postId: string;
-  userId: any;
 }
 
 export class PostResponseDto {

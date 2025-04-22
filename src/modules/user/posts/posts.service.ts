@@ -95,6 +95,7 @@ export class PostsService {
 
     return this.mapPostToResponseDto(post);
   }
+
   async voteOnPost(
     userId: string,
     username: string,
@@ -118,6 +119,21 @@ export class PostsService {
     return this.mapPostToResponseDto(user.posts[postIndex]);
   }
 
+  async getTimelinePosts(userId: string): Promise<PostResponseDto[]> {
+    console.log(userId)
+    const users = await this.userModel
+      .find({ 'posts.0': { $exists: true } })
+      .select('posts')
+      .lean()
+      .exec();
+
+    const allPosts = users.flatMap(user => user.posts);
+
+    allPosts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+    return allPosts.map(post => this.mapPostToResponseDto(post));
+  }
+
   private mapPostToResponseDto(post: Post): PostResponseDto {
     const response = new PostResponseDto();
     response._id = post._id.toString();
@@ -127,7 +143,6 @@ export class PostsService {
     response.comments = post.comments.slice(-5).map(comment => {
       const commentDto = new CommentResponseDto();
       commentDto.content = comment.content;
-      commentDto.author = comment.author.toString();
       commentDto.createdAt = comment.createdAt;
       return commentDto;
     });

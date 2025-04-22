@@ -47,4 +47,10 @@ export class PostsController {
   ): Promise<PostResponseDto> {
     return this.postsService.voteOnPost(user.id, username, postId, votePayload);
   }
+    @Get('/timeline')
+  getTimelinePosts(
+    @CurrentUser() user: jwtPayload,
+  ): Promise<PostResponseDto[]> {
+    return this.postsService.getTimelinePosts(user.id);
+  }
 }

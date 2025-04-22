@@ -59,8 +59,6 @@ export class CommentsService {
       createdAt: new Date(),
     };
 
-    
-
     const updatedUser = await this.userModel.findOneAndUpdate(
       { username, 'posts._id': new Types.ObjectId(postId) },
       { 
@@ -138,18 +136,12 @@ export class CommentsService {
     }
   }
 
-private mapCommentToResponseDto(comment: any, postId: string): CommentResponseDto {
-  return {
-    content: comment.content,
-    postId,
-    userId: comment.author instanceof Types.ObjectId
-      ? comment.author.toString()
-      : comment.author.toString(),
-    createdAt: comment.createdAt,
-    author: comment.author instanceof Types.ObjectId
-      ? comment.author.toString()
-      : comment.author.toString(),
-  };
-}
-
+  private mapCommentToResponseDto(comment: any, postId: string): CommentResponseDto {
+    return {
+      id: comment._id.toString(),
+      content: comment.content,
+      postId,
+      createdAt: comment.createdAt,
+    };
+  }
 }
