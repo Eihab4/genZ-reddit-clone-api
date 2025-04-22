@@ -29,14 +29,14 @@ export class PostsController {
   ): Promise<PostResponseDto[]> {
     return this.postsService.getAllPosts(user.id, username);
   }
-  @Get('/timeline')
+  @Get('/timeline/all')
   getTimelinePosts(
     @CurrentUser() user: jwtPayload,
   ): Promise<PostResponseDto[]> {
     return this.postsService.getTimelinePosts(user.id);
       }
   
-  @Get(':postId([a-f0-9]{24})')
+  @Get(':postId')
   getPostById(
     @CurrentUser() user: jwtPayload,
     @Param('username') username: string,
