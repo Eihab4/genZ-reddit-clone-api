@@ -29,8 +29,14 @@ export class PostsController {
   ): Promise<PostResponseDto[]> {
     return this.postsService.getAllPosts(user.id, username);
   }
-
-  @Get(':postId')
+  @Get('/timeline')
+  getTimelinePosts(
+    @CurrentUser() user: jwtPayload,
+  ): Promise<PostResponseDto[]> {
+    return this.postsService.getTimelinePosts(user.id);
+      }
+  
+  @Get(':postId([a-f0-9]{24})')
   getPostById(
     @CurrentUser() user: jwtPayload,
     @Param('username') username: string,
@@ -47,10 +53,5 @@ export class PostsController {
   ): Promise<PostResponseDto> {
     return this.postsService.voteOnPost(user.id, username, postId, votePayload);
   }
-    @Get('/timeline')
-  getTimelinePosts(
-    @CurrentUser() user: jwtPayload,
-  ): Promise<PostResponseDto[]> {
-    return this.postsService.getTimelinePosts(user.id);
-  }
+
 }
