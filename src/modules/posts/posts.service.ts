@@ -2,10 +2,10 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument } from '../schemas/user.schema';
 import { CreatePostDto } from './dtos/request/create-post.request.dto';
 import { PostResponseDto, CommentResponseDto } from './dtos/response/post-response.dto';
 import { VotePostDto } from './dtos/request/vote.request.dto';
+import { User, UserDocument } from '../user/schemas/user.schema';
 
 interface Post {
   _id: Types.ObjectId;

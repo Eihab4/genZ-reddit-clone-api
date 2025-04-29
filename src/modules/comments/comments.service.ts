@@ -6,9 +6,9 @@
 import { ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { User, UserDocument } from '../../schemas/user.schema';
 import { CreateCommentDto } from './dto/request/create-comment.dto';
-import { CommentResponseDto } from '../dtos/response/post-response.dto';
+import { CommentResponseDto } from './dto/response/comment.response.dto';
+import { User, UserDocument } from '../user/schemas/user.schema';
 
 @Injectable()
 export class CommentsService {

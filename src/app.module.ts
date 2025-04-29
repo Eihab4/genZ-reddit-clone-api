@@ -6,8 +6,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { CommentsModule } from './modules/user/posts/comments/comments.module';
-import { CommentsController } from './modules/user/posts/comments/comments.controller';
+import { CommentsModule } from './modules/comments/comments.module';
 
 @Module({
   imports: [
@@ -26,7 +25,7 @@ import { CommentsController } from './modules/user/posts/comments/comments.contr
     AuthModule,
     CommentsModule,
   ],
-  controllers: [AppController, CommentsController],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}

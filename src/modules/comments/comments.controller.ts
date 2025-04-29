@@ -3,9 +3,9 @@ import { Body, Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/c
 import { CommentsService } from './comments.service';
 import { jwtPayload } from 'src/modules/auth/utils/jwtPayload';
 import { CurrentUser } from 'src/decorators/currentUser';
-import { CommentResponseDto } from '../dtos/response/post-response.dto';
 import { CreateCommentDto } from './dto/request/create-comment.dto';
 import { AuthGuard } from 'src/modules/auth/guards/auth.guard';
+import { CommentResponseDto } from './dto/response/comment.response.dto';
 
 @UseGuards(AuthGuard)
 @Controller('users/:username/posts/:postId/comments')

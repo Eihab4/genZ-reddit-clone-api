@@ -3,11 +3,10 @@ import { Controller, Post, Param, Body, UseGuards, Get, Patch } from '@nestjs/co
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dtos/request/create-post.request.dto';
 import { PostResponseDto } from './dtos/response/post-response.dto';
-import { AuthGuard } from '../../auth/guards/auth.guard';
-import { CurrentUser } from '../../../decorators/currentUser';
-import { jwtPayload } from '../../auth/utils/jwtPayload';
 import { VotePostDto } from './dtos/request/vote.request.dto';
-
+import { jwtPayload } from '../auth/utils/jwtPayload';
+import { AuthGuard } from '../auth/guards/auth.guard';
+import { CurrentUser } from 'src/decorators/currentUser';
 @UseGuards(AuthGuard)
 @Controller('/users/:username/posts')
 export class PostsController {
